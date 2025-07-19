@@ -2,6 +2,37 @@
 ### **Welcome to Apply Ally!**
 *****
 
+MEG:
+- Run the Google Cloud SDK Shell (Special Google Terminal)
+- Authenticate using:
+
+```bash
+gcloud auth login
+```
+- Then do the following authentication as well (not sure if needed yet)
+
+```bash
+gcloud auth application-default login
+```
+- Then navigate to where the agent is (rename it to multi_tool_agent for now - the directory that is - the one with the agent)
+- For me that was:
+```bash
+cd C:\Users\thema\PycharmProjects\ApplyAlly
+```
+- Run the following command to activate your virtual environment
+
+```bash
+.venv\Scripts\Activate
+```
+
+- Then run adk
+
+```bash
+adk web
+```
+
+- Profit?
+
 Apply Ally is a multi-agent framework designed to help you land your dream job.
 
 We're building a system with **autonomous, collaborative AI agents** that can:
