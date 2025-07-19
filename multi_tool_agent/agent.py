@@ -3,7 +3,7 @@ from zoneinfo import ZoneInfo
 from google.adk.agents import Agent
 from dotenv import load_dotenv
 
-load_dotenv()
+
 
 def get_weather(city: str) -> dict:
     """Retrieves the current weather report for a specified city.
@@ -57,6 +57,8 @@ def get_current_time(city: str) -> dict:
     return {"status": "success", "report": report}
 
 
+load_dotenv()
+
 root_agent = Agent(
     name="weather_time_agent",
     model="gemini-2.0-flash",
@@ -68,3 +70,4 @@ root_agent = Agent(
     ),
     tools=[get_weather, get_current_time],
 )
+
