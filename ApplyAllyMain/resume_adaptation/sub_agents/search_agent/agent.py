@@ -1,10 +1,7 @@
 import time
 import warnings
-import os
 
-import selenium
 from google.adk.agents.llm_agent import Agent
-from google.adk.tools.load_artifacts_tool import load_artifacts_tool
 from google.adk.tools.tool_context import ToolContext
 from google.genai import types
 import undetected_chromedriver as uc
@@ -12,12 +9,10 @@ from PIL import Image
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from google.adk.tools import FunctionTool
-from google.adk.events import Event
 
 import asyncio
-from ApplyAllyMain.shared_data import env_variables
-from ApplyAllyMain.sub_agents.search_agent import prompt
+from ...shared_data import env_variables
+from . import prompt
 
 warnings.filterwarnings("ignore", category=UserWarning)
 
@@ -53,51 +48,6 @@ def login_page(tool_context: ToolContext) -> None:
     visible_driver.quit()
 
 
-def take_screenshot(driver, tool_context: ToolContext) -> dict:
-    """
-    Takes a screenshot of the page once it has been navigated to.
-    Not to be used until called at the end of the scrape_linkedin tool.
-    Output to be saved as an artifact.
-    """
-
-    #timestamp = time.strftime("%Y%m%d-%H%M%S")
-    filename = f"job_title_company.png"
-
-    driver.save_screenshot(filename)
-    time.sleep(2)
-
-    image = Image.open(filename)
-
-    width, height = image.size
-
-    # Set the size of the crop (e.g., top-right 200x200 pixels)
-    crop_width = 1200
-    crop_height = 400
-
-    # Calculate crop box for the top-right corner
-    left = width - crop_width
-    upper = 0
-    right = width
-    lower = crop_height
-
-    # Crop the image
-    top_right_crop = image.crop((left, upper, right, lower))
-
-    # Save the cropped image to bytes in PNG format
-    from io import BytesIO
-    img_byte_arr = BytesIO()
-    top_right_crop.save(img_byte_arr, format='PNG')
-    png_bytes = img_byte_arr.getvalue()
-
-    tool_context.save_artifact(
-        filename,
-        types.Part.from_bytes(data=png_bytes, mime_type="image/png")
-    )
-
-    driver.quit()
-
-    return {"status": "ok", "filename": filename}
-
 
 def scrape_linkedin(tool_context: ToolContext) -> dict:
     """
@@ -109,7 +59,8 @@ def scrape_linkedin(tool_context: ToolContext) -> dict:
 
     ### CALLBACK SOMEWHERE IN HERE TO DEAL WITH MISFORMATTED OR NON-EXISTENT LINKEDIN URLS???
 
-    job_url = tool_context.state.get("job_description_url", None)
+    job_url_dict = tool_context.state.get("job_description_url", None)
+    job_url = job_url_dict.get("LinkedinURL", None)
     print(job_url)
 
     # Start undetected Chrome
@@ -146,17 +97,29 @@ def scrape_linkedin(tool_context: ToolContext) -> dict:
     )
     description_text = desc_elem.text
 
-    tool_context.state["linkedin_description"] = description_text
+    title_elem = WebDriverWait(driver, 15).until(
+        EC.presence_of_element_located((By.ID, "ember51"))
+    )
 
-    asyncio.run(take_screenshot(driver))
+    company_elem = WebDriverWait(driver, 15).until(
+        EC.presence_of_element_located(
+            (By.CLASS_NAME, "job-details-jobs-unified-top-card__company-name")
+        )
+    )
+
+    # Then grab the text from the <a> tag inside it
+    company_name = company_elem.find_element(By.TAG_NAME, "a").text
+
+    tool_context.state["linkedin_description"] = description_text
+    tool_context.state["linkedin_title"] = title_elem.text
+    tool_context.state["linkedin_company"] = company_name
 
     return {"status": "ok", "description": description_text}
 
-def search_agent():
-    return Agent(
+search_agent = Agent(
         model=env_variables.GOOGLE_MODEL,
         name="search_agent",
-        description="You will utilize the provided URL to scrape text and take a screenshot of a LinkedIn job posting."
+        description="You will utilize the provided URL to scrape text of a LinkedIn job posting."
             "You will save both of these in your context.",
         instruction=prompt.SEARCH_AGENT_PROMPT,
         tools=[scrape_linkedin, login_page]
