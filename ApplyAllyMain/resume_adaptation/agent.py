@@ -20,6 +20,11 @@ import datetime
 from zoneinfo import ZoneInfo
 from google.adk.artifacts import InMemoryArtifactService
 from google.adk.sessions import InMemorySessionService
+import os
+
+os.environ["GOOGLE_GENAI_USE_VERTEXAI"]  = "TRUE"
+os.environ["GOOGLE_CLOUD_PROJECT"]      = "applyally"
+os.environ["GOOGLE_CLOUD_LOCATION"]     = "us-central1"
 
 load_dotenv()
 os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "TRUE"
