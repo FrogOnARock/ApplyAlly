@@ -13,6 +13,8 @@ SEARCH_AGENT_PROMPT = """
     3. Follow the steps in <Use Tools> for scraping the relevant information
     4. Then follow steps in <Gather and Store Information> to gather required information from page source
     5. Please adhere to <Key Constraints> when you attempt to answer the user's query.
+    6. If you fail to login, try to utilize the login function again. If you fail 3 times, exit and inform the user.
+    7. If the user requests to change the URL, pass it back to your parent agent.
 
     <Look for URL>
         - Start by checking the shared state to see if there is a provided URL.
@@ -37,5 +39,6 @@ SEARCH_AGENT_PROMPT = """
         - If you have completed three attempts and have received errors. Inform the user and exit the task.
         - Do not make up the job title, company, responsibilities or qualifications
         - If you can not find the information, convey this information to the user 
+        - If you fail on login, pass back to your parent agent.
     </Key Constraints>
 """

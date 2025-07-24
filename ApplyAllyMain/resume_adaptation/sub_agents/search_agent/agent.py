@@ -2,6 +2,7 @@ import time
 import warnings
 
 from google.adk.agents.llm_agent import Agent
+from google.adk.tools import tool_context
 from google.adk.tools.tool_context import ToolContext
 from google.genai import types
 import undetected_chromedriver as uc
@@ -16,44 +17,50 @@ from . import prompt
 
 warnings.filterwarnings("ignore", category=UserWarning)
 
-def login_page(tool_context: ToolContext) -> None:
+def login_page(tool_context: ToolContext) -> dict:
     """
     Open a login page for the users to sign in to LinkedIn.
     Browser will be visible to the user to login and will exit one the user reaches the main feed page.
     Cookies are stored in the session state for use in the scraping tool.
     """
 
-    visible_driver = uc.Chrome()
-    visible_driver.get("https://www.linkedin.com/login")
+    try:
 
-    # Wait until user reaches LinkedIn homepage (/feed/)
-    max_wait = 60  # max seconds to wait
-    start = time.time()
-    while True:
-        current_url = visible_driver.current_url
-        if "/feed" in current_url:
-            print("Logged in successfully.")
-            break
-        if time.time() - start > max_wait:
-            print("Timeout waiting for login.")
-            visible_driver.quit()
-            raise TimeoutError("Login not completed within 60 seconds.")
-        time.sleep(2)
+        visible_driver = uc.Chrome()
+        visible_driver.get("https://www.linkedin.com/login")
 
-        # PROBABLY HAVE TO ADD THIS TO THE SESSION STATE
-        cookies = visible_driver.get_cookies()
-        tool_context.state["linkedin_cookies"] = cookies
+        # Wait until user reaches LinkedIn homepage (/feed/)
+        max_wait = 60  # max seconds to wait
+        start = time.time()
+        while True:
+            current_url = visible_driver.current_url
+            if "/feed" in current_url:
+                print("Logged in successfully.")
+                break
+            if time.time() - start > max_wait:
+                print("Timeout waiting for login.")
+                visible_driver.quit()
+                raise TimeoutError("Login not completed within 60 seconds.")
+            time.sleep(2)
 
-    # Close the visible window
-    visible_driver.quit()
+            # PROBABLY HAVE TO ADD THIS TO THE SESSION STATE
+            cookies = visible_driver.get_cookies()
 
+            tool_context.state["linkedin_cookies"] = cookies
 
+        # Close the visible window
+        visible_driver.quit()
+
+        return {"status": "ok", "login": "completed"}
+
+    except Exception as e:
+        return {"status": "error", "login": "failed", "message": str(e)}
 
 def scrape_linkedin(tool_context: ToolContext) -> dict:
     """
-    Scrapes a LinkedIn job URL. Extracts the job description via HTML parsing
-    and takes a screenshot of the top-right for job title/company extraction.
-    Stores job description text in 'linkedin_description' state and screenshot as 'job_title_company.png' artifact.
+    Scrapes a LinkedIn job URL. Extracts the job description, company name, and job title via HTML parsing
+    Stores job description text in 'linkedin_description' state, stores the company name in 'linkedin_company' state,
+    and stores the job title in 'linkedin_title' state.
     """
 
 
@@ -98,7 +105,9 @@ def scrape_linkedin(tool_context: ToolContext) -> dict:
     description_text = desc_elem.text
 
     title_elem = WebDriverWait(driver, 15).until(
-        EC.presence_of_element_located((By.ID, "ember51"))
+        EC.presence_of_element_located(
+            (By.CSS_SELECTOR, ".job-details-jobs-unified-top-card__job-title .ember-view")
+        )
     )
 
     company_elem = WebDriverWait(driver, 15).until(
@@ -116,13 +125,20 @@ def scrape_linkedin(tool_context: ToolContext) -> dict:
 
     return {"status": "ok", "description": description_text}
 
+### LOOP MULTIPLE TIMES WITH THE AFTER TOOL CALLBACK AND JUST RAISE AN ERROR IF WE DON'T HAVE OUR LINKEDIN DESCRIPTION, TITLE,
+### AND COMPANY
+#def check_scrape(tool: scrape_linkedin, args: [], tool_context: ToolContext, tool_response: Dict):
+#    tool_context.state["linkedin_cookies"] = tool_context.state.get("linkedin_cookies", None)
+
+
 search_agent = Agent(
         model=env_variables.GOOGLE_MODEL,
         name="search_agent",
         description="You will utilize the provided URL to scrape text of a LinkedIn job posting."
             "You will save both of these in your context.",
         instruction=prompt.SEARCH_AGENT_PROMPT,
-        tools=[scrape_linkedin, login_page]
+        tools=[scrape_linkedin, login_page],
+        #after_tool_callback=[check_scrape]
     )
 
 
