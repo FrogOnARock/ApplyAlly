@@ -21,12 +21,20 @@ import datetime
 from zoneinfo import ZoneInfo
 from google.adk.artifacts import InMemoryArtifactService
 from google.adk.sessions import InMemorySessionService
+
 from google.adk.tools.agent_tool import AgentTool
 
 from PyPDF2 import PdfReader
 import tkinter as tk
 import tkinter.filedialog as filedialog
 from io import BytesIO
+
+import os
+
+os.environ["GOOGLE_GENAI_USE_VERTEXAI"]  = "TRUE"
+os.environ["GOOGLE_CLOUD_PROJECT"]      = "applyally"
+os.environ["GOOGLE_CLOUD_LOCATION"]     = "us-central1"
+
 
 load_dotenv()
 os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "TRUE"
