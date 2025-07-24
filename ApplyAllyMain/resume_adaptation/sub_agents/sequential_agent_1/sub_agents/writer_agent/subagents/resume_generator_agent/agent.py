@@ -3,7 +3,7 @@ LinkedIn Post Generator Agent
 
 This agent generates the initial LinkedIn post before refinement.
 """
-from .....shared_data import env_variables
+from ApplyAllyMain.resume_adaptation.shared_data import env_variables
 from google.adk.agents.llm_agent import LlmAgent
 from . import prompt
 

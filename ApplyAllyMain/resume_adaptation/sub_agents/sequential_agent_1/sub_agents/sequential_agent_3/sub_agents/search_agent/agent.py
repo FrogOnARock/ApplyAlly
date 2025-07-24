@@ -2,17 +2,13 @@ import time
 import warnings
 
 from google.adk.agents.llm_agent import Agent
-from google.adk.tools import tool_context
 from google.adk.tools.tool_context import ToolContext
-from google.genai import types
 import undetected_chromedriver as uc
-from PIL import Image
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-import asyncio
-from ...shared_data import env_variables
+from .....shared_data import env_variables
 from . import prompt
 
 warnings.filterwarnings("ignore", category=UserWarning)

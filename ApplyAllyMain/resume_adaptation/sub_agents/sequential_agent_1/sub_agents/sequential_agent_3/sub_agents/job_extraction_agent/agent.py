@@ -2,7 +2,7 @@ import warnings
 
 from google.adk.agents.llm_agent import Agent
 
-from ...shared_data import env_variables
+from .....shared_data import env_variables
 from . import prompt
 
 warnings.filterwarnings("ignore", category=UserWarning)
