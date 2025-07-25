@@ -17,15 +17,9 @@ from google.adk.tools.agent_tool import AgentTool
 
 import os
 
-os.environ["GOOGLE_GENAI_USE_VERTEXAI"]  = "TRUE"
-os.environ["GOOGLE_CLOUD_PROJECT"]      = "applyally"
-os.environ["GOOGLE_CLOUD_LOCATION"]     = "us-central1"
-
-
 load_dotenv()
-os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "TRUE"
-os.environ["GOOGLE_CLOUD_PROJECT"] = "applyally"
-os.environ["GOOGLE_CLOUD_LOCATION"] = "us-central1"
+os.environ["GOOGLE_API_KEY"] = os.getenv("google_key")
+
 
 def set_session(callback_context: CallbackContext):
     callback_context.state["unique_id"] = "user_1"
