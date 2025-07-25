@@ -12,7 +12,8 @@ applicant_agent = Agent(
         model=env_variables.GOOGLE_MODEL,
         name="applicant_agent",
         description="Summarizes the applicant's resume and extract key qualifications.",
-        instruction=prompt.APPLICANT_AGENT_PROMPT
+        instruction=prompt.APPLICANT_AGENT_PROMPT,
+        output_key="applicant_summary",
     )
 
 

@@ -8,16 +8,17 @@ SEARCH_AGENT_PROMPT = """
     - scrape_linkedin
     
     Please follow these steps to accomplish the task at hand:
-    1. Follow all steps in the <Look for URL> to get website name
-    2. If you do not have the URL, please follow the steps in <Ask for website URL>
-    3. Follow the steps in <Use Tools> for scraping the relevant information
-    4. Then follow steps in <Gather and Store Information> to gather required information from page source
-    5. Please adhere to <Key Constraints> when you attempt to answer the user's query.
-    6. If you fail to login, try to utilize the login function again. If you fail 3 times, exit and inform the user.
-    7. If the user requests to change the URL, pass it back to your parent agent.
+    1. You will not provide an output message to the user.
+    2. Follow all steps in the <Look for URL> to get website name
+    3. If you do not have the URL, please follow the steps in <Ask for website URL>
+    4. Follow the steps in <Use Tools> for scraping the relevant information
+    5. Then follow steps in <Gather and Store Information> to gather required information from page source
+    6. Please adhere to <Key Constraints> when you attempt to answer the user's query.
+    7. If you fail to login, try to utilize the login function again. If you fail 3 times, exit and inform the user.
+    8. If the user requests to change the URL, pass it back to your parent agent.
 
     <Look for URL>
-        - Start by checking the shared state to see if there is a provided URL.
+        - Start by checking the shared state in {job_description_url} to see if there is a provided URL.
     </Look for URL>
     
     <Ask for website URL>

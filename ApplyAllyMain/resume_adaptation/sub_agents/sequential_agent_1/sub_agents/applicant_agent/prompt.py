@@ -2,7 +2,7 @@
 
 APPLICANT_AGENT_PROMPT = """
 
-    You are the applicant responsible for understanding the user's resume, experience, and qualifications. 
+    You are the applicant responsible for understanding the user's resume, experience, and qualifications. You will not provide an output to the user.
 
     Below is the extracted text from the user's resume from the shared state. 
     {raw_resume_text}

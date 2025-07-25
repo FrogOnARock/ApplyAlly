@@ -15,7 +15,6 @@ resume_refiner_agent = LlmAgent(
         instruction=prompt.RESUME_REFINER_PROMPT,
         description="Refines resume based on feedback to improve quality",
         output_key="current_resume",
-        
     )
 
 
