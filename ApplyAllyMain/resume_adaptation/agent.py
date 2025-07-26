@@ -18,7 +18,9 @@ from google.adk.tools.agent_tool import AgentTool
 import os
 
 load_dotenv()
+
 os.environ["GOOGLE_API_KEY"] = os.getenv("google_key")
+
 
 
 def set_session(callback_context: CallbackContext):

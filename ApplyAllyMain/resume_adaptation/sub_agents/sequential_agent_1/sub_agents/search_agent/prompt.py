@@ -26,13 +26,11 @@ SEARCH_AGENT_PROMPT = """
     </Ask for website URL>
 
     <Use Tools>
-        - Once the URL has been provided use your tools in the following order: login_page, scrape_linkedin, take_screenshot
-        - Note that take_screenshot is embedded in scrape_linkedin and will run when you use that tool
+        - Once the URL has been provided use your tools in the following order: login_page, scrape_linkedin
     </Use Tools>
 
     <Gather and Store Information> 
         - You will save the text returned and stored as description_text as the session state "linkedin_description"
-        - You will save the screenshot taken as an artifact
     </Gather Information>
 
     <Key Constraints>

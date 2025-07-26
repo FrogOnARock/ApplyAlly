@@ -3,8 +3,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-AGENT_NAME = "brand_search_optimization"
-DESCRIPTION = "A helpful assistant for brand search optimization."
 PROJECT = os.getenv("GOOGLE_CLOUD_PROJECT", "EMPTY")
 LOCATION = os.getenv("GOOGLE_CLOUD_LOCATION", "global")
 GOOGLE_MODEL = os.getenv("MODEL", "gemini-2.0-flash")
