@@ -60,7 +60,7 @@ Apply Ally consists of several specialized agents working in parallel and feedba
 
 Apply Ally also consist of several workflow agents who orchestrate the LLM Agents:
 
-| Agent (Non-Workflow)           | Role                                                                          |
+| Agent (Workflow)           | Role                                                                          |
 |--------------------------------|-------------------------------------------------------------------------------|
 | **Sequential Agent 1**         | Ensures the sequence passes to the parallel agent, then the writer-refiner    |
 | **Parallel Agent**             | Utilizes both the search and applicant agent in parallel, ensuring efficiency |
